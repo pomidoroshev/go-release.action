@@ -34,11 +34,9 @@ if [ $GOOS == 'windows' ]; then
 ARCHIVE=tmp.zip
 zip -9r $ARCHIVE ${FILE_LIST}
 else
-ARCHIVE=tmp.tgz
+ARCHIVE=tmp.tar.gz
 tar cvfz $ARCHIVE ${FILE_LIST}
 fi
-
-CHECKSUM=$(md5sum ${ARCHIVE} | cut -d ' ' -f 1)
 
 curl \
   -X POST \
@@ -46,10 +44,3 @@ curl \
   -H 'Content-Type: application/octet-stream' \
   -H "Authorization: Bearer ${GITHUB_TOKEN}" \
   "${UPLOAD_URL}?name=${NAME}.${ARCHIVE/tmp./}"
-
-curl \
-  -X POST \
-  --data $CHECKSUM \
-  -H 'Content-Type: text/plain' \
-  -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-  "${UPLOAD_URL}?name=${NAME}_checksum.txt"
